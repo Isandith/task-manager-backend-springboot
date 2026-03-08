@@ -4,6 +4,8 @@ import com.taskmanager.task_manager.dto.request.LoginRequest;
 import com.taskmanager.task_manager.dto.request.RegisterRequest;
 import com.taskmanager.task_manager.dto.response.AuthResponse;
 import com.taskmanager.task_manager.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,16 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
         AuthResponse response = authService.register(request);
+        return new ResponseEntity<AuthResponse>(response, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/register-admin")
+    @Operation(
+            summary = "Register a new ADMIN user",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    public ResponseEntity<AuthResponse> registerAdmin(@Valid @RequestBody RegisterRequest request) {
+        AuthResponse response = authService.registerAdmin(request);
         return new ResponseEntity<AuthResponse>(response, HttpStatus.CREATED);
     }
 

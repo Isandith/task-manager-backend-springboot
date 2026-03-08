@@ -51,17 +51,40 @@ public class AuthServiceImpl implements AuthService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        Role role = Role.USER;
-        if (request.getRole() != null && request.getRole().trim().length() > 0) {
-            if ("ADMIN".equalsIgnoreCase(request.getRole().trim())) {
-                role = Role.ADMIN;
-            } else if ("USER".equalsIgnoreCase(request.getRole().trim())) {
-                role = Role.USER;
-            } else {
-                throw new BadRequestException("Role must be ADMIN or USER");
-            }
+        // Self-registration is intentionally restricted to USER only.
+        if (request.getRole() != null && request.getRole().trim().length() > 0
+                && !"USER".equalsIgnoreCase(request.getRole().trim())) {
+            throw new BadRequestException("Self-registration can only create USER accounts");
         }
-        user.setRole(role);
+        user.setRole(Role.USER);
+
+        User savedUser = userRepository.save(user);
+
+        UserDetails userDetails = org.springframework.security.core.userdetails.User
+                .withUsername(savedUser.getUsername())
+                .password(savedUser.getPassword())
+                .authorities("ROLE_" + savedUser.getRole().name())
+                .build();
+
+        String token = jwtService.generateToken(userDetails);
+        return new AuthResponse(token, "Bearer", savedUser.getUsername(), savedUser.getRole().name());
+    }
+
+    @Override
+    public AuthResponse registerAdmin(RegisterRequest request) {
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new BadRequestException("Username already exists");
+        }
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new BadRequestException("Email already exists");
+        }
+
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(Role.ADMIN);
 
         User savedUser = userRepository.save(user);
 

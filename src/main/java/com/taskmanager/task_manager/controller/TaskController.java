@@ -4,6 +4,7 @@ import com.taskmanager.task_manager.dto.request.TaskRequest;
 import com.taskmanager.task_manager.dto.response.ApiMessageResponse;
 import com.taskmanager.task_manager.dto.response.TaskResponse;
 import com.taskmanager.task_manager.service.TaskService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/tasks")
+@SecurityRequirement(name = "bearerAuth")
 public class TaskController {
 
     private final TaskService taskService;

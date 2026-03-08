@@ -137,7 +137,7 @@ public class TaskServiceImpl implements TaskService {
         Task task = findTaskById(taskId);
 
         validateTaskAccess(task, currentUser);
-        task.setStatus(TaskStatus.COMPLETED);
+        task.setStatus(TaskStatus.DONE);
 
         Task updatedTask = taskRepository.save(task);
         return mapTaskToResponse(updatedTask);
@@ -270,7 +270,7 @@ public class TaskServiceImpl implements TaskService {
 
     private TaskStatus parseStatusOrDefault(String status) {
         if (status == null || status.trim().length() == 0) {
-            return TaskStatus.PENDING;
+            return TaskStatus.TODO;
         }
         return parseStatus(status);
     }
@@ -287,7 +287,7 @@ public class TaskServiceImpl implements TaskService {
         try {
             return TaskStatus.valueOf(normalized);
         } catch (IllegalArgumentException ex) {
-            throw new BadRequestException("Invalid task status. Allowed values: PENDING, IN_PROGRESS, COMPLETED");
+            throw new BadRequestException("Invalid task status. Allowed values: TODO, IN_PROGRESS, DONE");
         }
     }
 
