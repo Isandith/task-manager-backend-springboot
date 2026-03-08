@@ -33,6 +33,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/**
+ * Unit tests for task access control and retrieval logic.
+ */
 @ExtendWith(MockitoExtension.class)
 class TaskServiceImplTest {
 
@@ -45,11 +48,17 @@ class TaskServiceImplTest {
     @InjectMocks
     private TaskServiceImpl taskService;
 
+    /**
+     * Clears authentication context after each test to prevent leakage.
+     */
     @AfterEach
     void clearSecurityContext() {
         SecurityContextHolder.clearContext();
     }
 
+    /**
+     * Verifies USER role can only retrieve user-scoped task pages.
+     */
     @Test
     void getTasks_WithUserRole_ReturnsOnlyUserScopedTasks() {
         setAuth("john");
@@ -73,6 +82,9 @@ class TaskServiceImplTest {
         verify(taskRepository, never()).findAll(any(Pageable.class));
     }
 
+    /**
+     * Verifies ADMIN role can retrieve all tasks.
+     */
     @Test
     void getTasks_WithAdminRole_ReturnsAllTasks() {
         setAuth("admin");
@@ -95,6 +107,9 @@ class TaskServiceImplTest {
         verify(taskRepository).findAll(any(Pageable.class));
     }
 
+    /**
+     * Verifies non-owner USER cannot access another user's task details.
+     */
     @Test
     void getTaskById_WithDifferentOwner_ThrowsUnauthorized() {
         setAuth("john");
@@ -117,12 +132,18 @@ class TaskServiceImplTest {
         assertThrows(UnauthorizedActionException.class, () -> taskService.getTaskById(300));
     }
 
+    /**
+     * Helper to set a username as the current authentication principal.
+     */
     private void setAuth(String username) {
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
+    /**
+     * Helper to create a minimal task fixture for tests.
+     */
     private Task buildTask(Integer id, User user) {
         Task task = new Task();
         task.setId(id);

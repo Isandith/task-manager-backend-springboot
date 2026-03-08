@@ -1,5 +1,8 @@
 package com.taskmanager.task_manager.dto.response;
 
+/**
+ * Authentication response containing token and user identity metadata.
+ */
 public class AuthResponse {
 
     private String token;

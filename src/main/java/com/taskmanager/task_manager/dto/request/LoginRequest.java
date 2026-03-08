@@ -2,6 +2,9 @@ package com.taskmanager.task_manager.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 
+/**
+ * Request payload used for user authentication.
+ */
 public class LoginRequest {
 
     @NotBlank(message = "Username is required")

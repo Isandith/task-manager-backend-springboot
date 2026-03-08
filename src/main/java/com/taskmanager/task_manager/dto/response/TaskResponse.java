@@ -3,6 +3,9 @@ package com.taskmanager.task_manager.dto.response;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * Response payload describing task details returned by API endpoints.
+ */
 public class TaskResponse {
 
     private Integer id;

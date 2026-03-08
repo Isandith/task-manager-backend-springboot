@@ -5,6 +5,9 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
+/**
+ * Request payload used to create or update tasks.
+ */
 public class TaskRequest {
 
     @NotBlank(message = "Title is required")

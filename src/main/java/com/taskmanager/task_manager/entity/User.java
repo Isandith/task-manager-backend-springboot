@@ -18,6 +18,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * JPA entity representing an application user.
+ */
 @Entity
 @Table(name = "users")
 public class User {
@@ -48,6 +51,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = false)
     private List<Task> tasks = new ArrayList<Task>();
 
+    /**
+     * Initializes creation and update timestamps before first persist.
+     */
     @PrePersist
     public void prePersist() {
         LocalDateTime now = LocalDateTime.now();
@@ -55,6 +61,9 @@ public class User {
         this.updatedAt = now;
     }
 
+    /**
+     * Updates the modification timestamp before entity update.
+     */
     @PreUpdate
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();

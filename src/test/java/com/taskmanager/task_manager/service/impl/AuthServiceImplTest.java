@@ -24,6 +24,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/**
+ * Unit tests for authentication registration behaviors.
+ */
 @ExtendWith(MockitoExtension.class)
 class AuthServiceImplTest {
 
@@ -42,6 +45,9 @@ class AuthServiceImplTest {
     @InjectMocks
     private AuthServiceImpl authService;
 
+    /**
+     * Verifies regular registration cannot assign ADMIN role directly.
+     */
     @Test
     void register_WithAdminRole_ThrowsBadRequest() {
         RegisterRequest request = new RegisterRequest();
@@ -58,6 +64,9 @@ class AuthServiceImplTest {
         verify(userRepository, never()).save(any(User.class));
     }
 
+    /**
+     * Verifies registration defaults role to USER and returns a token.
+     */
     @Test
     void register_WithoutRole_CreatesUserRoleAndReturnsToken() {
         RegisterRequest request = new RegisterRequest();
@@ -90,6 +99,9 @@ class AuthServiceImplTest {
         verify(passwordEncoder).encode(anyString());
     }
 
+    /**
+     * Verifies admin registration assigns ADMIN role and returns a token.
+     */
     @Test
     void registerAdmin_CreatesAdminRoleAndReturnsToken() {
         RegisterRequest request = new RegisterRequest();
@@ -122,6 +134,9 @@ class AuthServiceImplTest {
         verify(passwordEncoder).encode(anyString());
     }
 
+    /**
+     * Verifies duplicate username validation blocks admin registration.
+     */
     @Test
     void registerAdmin_WithDuplicateUsername_ThrowsBadRequest() {
         RegisterRequest request = new RegisterRequest();

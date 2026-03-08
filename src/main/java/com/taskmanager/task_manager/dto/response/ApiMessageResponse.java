@@ -1,5 +1,8 @@
 package com.taskmanager.task_manager.dto.response;
 
+/**
+ * Generic response wrapper for simple API messages.
+ */
 public class ApiMessageResponse {
 
     private String message;
