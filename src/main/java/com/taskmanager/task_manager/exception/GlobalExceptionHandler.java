@@ -1,4 +1,4 @@
-package com.taskmanager.task_manager.exception;
+﻿package com.taskmanager.task_manager.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +18,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Centralized REST exception handling for API error responses.
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    /**
+     * Handles bean validation errors and returns field-level details.
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationException(MethodArgumentNotValidException ex) {
         Map<String, Object> response = new HashMap<String, Object>();
@@ -43,42 +49,66 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Handles missing resource errors.
+     */
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleResourceNotFound(ResourceNotFoundException ex) {
         return buildErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
+    /**
+     * Handles bad request errors.
+     */
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<Map<String, Object>> handleBadRequest(BadRequestException ex) {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
+    /**
+     * Handles unauthorized action errors.
+     */
     @ExceptionHandler(UnauthorizedActionException.class)
     public ResponseEntity<Map<String, Object>> handleUnauthorizedAction(UnauthorizedActionException ex) {
         return buildErrorResponse(HttpStatus.FORBIDDEN, ex.getMessage());
     }
 
+    /**
+     * Handles access denied errors raised by Spring Security.
+     */
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex) {
         return buildErrorResponse(HttpStatus.FORBIDDEN, "You are not allowed to access this resource.");
     }
 
+    /**
+     * Handles authentication failures.
+     */
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<Map<String, Object>> handleAuthenticationException(AuthenticationException ex) {
         return buildErrorResponse(HttpStatus.UNAUTHORIZED, "Invalid username or password.");
     }
 
+    /**
+     * Handles request parameter type mismatch errors.
+     */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Map<String, Object>> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
         String message = "Invalid value for parameter: " + ex.getName();
         return buildErrorResponse(HttpStatus.BAD_REQUEST, message);
     }
 
+    /**
+     * Handles illegal argument errors.
+     */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex) {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
+    /**
+     * Handles data access errors and logs the underlying database issue.
+     */
     @ExceptionHandler(DataAccessException.class)
     public ResponseEntity<Map<String, Object>> handleDataAccessException(DataAccessException ex) {
         String message = "Database access error. Please verify database user permissions.";
@@ -90,12 +120,18 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, message);
     }
 
+    /**
+     * Handles unanticipated exceptions.
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
         logger.error("Unhandled exception", ex);
         return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred.");
     }
 
+    /**
+     * Builds a standard API error response payload.
+     */
     private ResponseEntity<Map<String, Object>> buildErrorResponse(HttpStatus status, String message) {
         Map<String, Object> response = new HashMap<String, Object>();
         response.put("timestamp", LocalDateTime.now());
