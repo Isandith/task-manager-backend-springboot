@@ -18,6 +18,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Authentication service implementation for register and login flows.
+ */
 @Service
 public class AuthServiceImpl implements AuthService {
 
@@ -36,6 +39,12 @@ public class AuthServiceImpl implements AuthService {
         this.jwtService = jwtService;
     }
 
+    /**
+     * Registers a standard user and returns an authentication response.
+     *
+     * @param request registration payload
+     * @return generated token and user metadata
+     */
     @Override
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
@@ -51,7 +60,7 @@ public class AuthServiceImpl implements AuthService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        // Self-registration is intentionally restricted to USER only.
+
         if (request.getRole() != null && request.getRole().trim().length() > 0
                 && !"USER".equalsIgnoreCase(request.getRole().trim())) {
             throw new BadRequestException("Self-registration can only create USER accounts");
@@ -70,6 +79,12 @@ public class AuthServiceImpl implements AuthService {
         return new AuthResponse(token, "Bearer", savedUser.getUsername(), savedUser.getRole().name());
     }
 
+    /**
+     * Registers an administrator account and returns an authentication response.
+     *
+     * @param request registration payload
+     * @return generated token and user metadata
+     */
     @Override
     public AuthResponse registerAdmin(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
@@ -98,6 +113,12 @@ public class AuthServiceImpl implements AuthService {
         return new AuthResponse(token, "Bearer", savedUser.getUsername(), savedUser.getRole().name());
     }
 
+    /**
+     * Authenticates a user and returns an authentication response.
+     *
+     * @param request login credentials
+     * @return generated token and user metadata
+     */
     @Override
     public AuthResponse login(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(

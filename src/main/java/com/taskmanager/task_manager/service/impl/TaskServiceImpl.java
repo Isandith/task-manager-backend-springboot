@@ -26,6 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Task service implementation with role-based access and filter logic.
+ */
 @Service
 public class TaskServiceImpl implements TaskService {
 
@@ -37,6 +40,12 @@ public class TaskServiceImpl implements TaskService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Creates a task for the authenticated user.
+     *
+     * @param request task payload
+     * @return created task response
+     */
     @Override
     public TaskResponse createTask(TaskRequest request) {
         User currentUser = getCurrentUser();
@@ -53,6 +62,13 @@ public class TaskServiceImpl implements TaskService {
         return mapTaskToResponse(savedTask);
     }
 
+    /**
+     * Updates an existing task if the user is authorized.
+     *
+     * @param taskId task id
+     * @param request updated payload
+     * @return updated task response
+     */
     @Override
     public TaskResponse updateTask(Integer taskId, TaskRequest request) {
         User currentUser = getCurrentUser();
@@ -77,6 +93,11 @@ public class TaskServiceImpl implements TaskService {
         return mapTaskToResponse(updatedTask);
     }
 
+    /**
+     * Deletes a task if the user is authorized.
+     *
+     * @param taskId task id
+     */
     @Override
     public void deleteTask(Integer taskId) {
         User currentUser = getCurrentUser();
@@ -86,6 +107,12 @@ public class TaskServiceImpl implements TaskService {
         taskRepository.delete(task);
     }
 
+    /**
+     * Retrieves a task by id if the user is authorized.
+     *
+     * @param taskId task id
+     * @return task response
+     */
     @Override
     public TaskResponse getTaskById(Integer taskId) {
         User currentUser = getCurrentUser();
@@ -95,6 +122,17 @@ public class TaskServiceImpl implements TaskService {
         return mapTaskToResponse(task);
     }
 
+    /**
+     * Retrieves tasks with optional filters, paging, and sorting.
+     *
+     * @param status optional status filter
+     * @param priority optional priority filter
+     * @param page zero-based page index
+     * @param size page size
+     * @param sortBy sort field
+     * @param sortDirection sort direction
+     * @return page of task responses
+     */
     @Override
     public Page<TaskResponse> getTasks(String status,
                                        String priority,
@@ -131,6 +169,12 @@ public class TaskServiceImpl implements TaskService {
         return new PageImpl<TaskResponse>(responseList, pageable, taskPage.getTotalElements());
     }
 
+    /**
+     * Marks a task as completed if the user is authorized.
+     *
+     * @param taskId task id
+     * @return updated task response
+     */
     @Override
     public TaskResponse markTaskCompleted(Integer taskId) {
         User currentUser = getCurrentUser();
@@ -143,6 +187,9 @@ public class TaskServiceImpl implements TaskService {
         return mapTaskToResponse(updatedTask);
     }
 
+    /**
+     * Fetches task pages according to role and optional status/priority filters.
+     */
     private Page<Task> fetchTaskPageByRoleAndFilters(User currentUser,
                                                      TaskStatus status,
                                                      TaskPriority priority,
@@ -208,6 +255,9 @@ public class TaskServiceImpl implements TaskService {
         throw new BadRequestException("sortDirection must be ASC or DESC");
     }
 
+    /**
+     * Validates whether the current user can access the given task.
+     */
     private void validateTaskAccess(Task task, User currentUser) {
         if (currentUser.getRole() == Role.ADMIN) {
             return;
@@ -222,6 +272,9 @@ public class TaskServiceImpl implements TaskService {
         }
     }
 
+    /**
+     * Resolves the authenticated user from the security context.
+     */
     private User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication.getName() == null) {
@@ -244,6 +297,9 @@ public class TaskServiceImpl implements TaskService {
         return optionalTask.get();
     }
 
+    /**
+     * Maps a task entity to API response format.
+     */
     private TaskResponse mapTaskToResponse(Task task) {
         TaskResponse response = new TaskResponse();
         response.setId(task.getId());

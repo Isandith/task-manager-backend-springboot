@@ -19,6 +19,9 @@ import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * JPA entity representing a task owned by a user.
+ */
 @Entity
 @Table(name = "tasks")
 public class Task {
@@ -54,6 +57,9 @@ public class Task {
     @JoinColumn(name = "user_id")
     private User user;
 
+    /**
+     * Initializes creation and update timestamps before first persist.
+     */
     @PrePersist
     public void prePersist() {
         LocalDateTime now = LocalDateTime.now();
@@ -61,6 +67,9 @@ public class Task {
         this.updatedAt = now;
     }
 
+    /**
+     * Updates the modification timestamp before entity update.
+     */
     @PreUpdate
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
