@@ -125,6 +125,7 @@ public class TaskServiceImpl implements TaskService {
     /**
      * Retrieves tasks with optional filters, paging, and sorting.
      *
+     * @param userId optional user id filter (ADMIN only)
      * @param status optional status filter
      * @param priority optional priority filter
      * @param page zero-based page index
@@ -134,7 +135,8 @@ public class TaskServiceImpl implements TaskService {
      * @return page of task responses
      */
     @Override
-    public Page<TaskResponse> getTasks(String status,
+    public Page<TaskResponse> getTasks(Integer userId,
+                                       String status,
                                        String priority,
                                        int page,
                                        int size,
@@ -157,7 +159,7 @@ public class TaskServiceImpl implements TaskService {
             priorityEnum = parsePriority(priority);
         }
 
-        Page<Task> taskPage = fetchTaskPageByRoleAndFilters(currentUser, statusEnum, priorityEnum, pageable);
+        Page<Task> taskPage = fetchTaskPageByRoleAndFilters(currentUser, userId, statusEnum, priorityEnum, pageable);
 
         List<TaskResponse> responseList = new ArrayList<TaskResponse>();
         List<Task> taskList = taskPage.getContent();
@@ -188,15 +190,19 @@ public class TaskServiceImpl implements TaskService {
     }
 
     /**
-     * Fetches task pages according to role and optional status/priority filters.
+     * Fetches task pages according to role and optional status/priority/userId filters.
      */
     private Page<Task> fetchTaskPageByRoleAndFilters(User currentUser,
+                                                     Integer filterUserId,
                                                      TaskStatus status,
                                                      TaskPriority priority,
                                                      Pageable pageable) {
         boolean isAdmin = currentUser.getRole() == Role.ADMIN;
+        Integer userId;
 
-        if (isAdmin) {
+        if (isAdmin && filterUserId != null) {
+            userId = filterUserId;
+        } else if (isAdmin) {
             if (status != null && priority != null) {
                 return taskRepository.findByStatusAndPriority(status, priority, pageable);
             }
@@ -207,9 +213,9 @@ public class TaskServiceImpl implements TaskService {
                 return taskRepository.findByPriority(priority, pageable);
             }
             return taskRepository.findAll(pageable);
+        } else {
+            userId = currentUser.getId();
         }
-
-        Integer userId = currentUser.getId();
 
         if (status != null && priority != null) {
             return taskRepository.findByUserIdAndStatusAndPriority(userId, status, priority, pageable);

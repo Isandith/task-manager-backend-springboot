@@ -107,6 +107,7 @@ public class TaskController {
     /**
      * Gets a paginated task list with optional status/priority filtering.
      *
+     * @param userId optional user id filter (ADMIN only)
      * @param status optional status filter
      * @param priority optional priority filter
      * @param page zero-based page index
@@ -118,9 +119,10 @@ public class TaskController {
     @GetMapping
         @Operation(
             summary = "List tasks",
-            description = "Returns a paginated list of tasks with optional status and priority filters, including sorting controls."
+            description = "Returns a paginated list of tasks with optional status and priority filters, including sorting controls. ADMIN can optionally filter by userId."
         )
     public ResponseEntity<Page<TaskResponse>> getTasks(
+            @RequestParam(required = false) Integer userId,
             @RequestParam(required = false) String status,
             @RequestParam(required = false) String priority,
             @RequestParam(defaultValue = "0") int page,
@@ -128,7 +130,7 @@ public class TaskController {
             @RequestParam(defaultValue = "dueDate") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDirection) {
 
-        Page<TaskResponse> response = taskService.getTasks(status, priority, page, size, sortBy, sortDirection);
+        Page<TaskResponse> response = taskService.getTasks(userId, status, priority, page, size, sortBy, sortDirection);
         return new ResponseEntity<Page<TaskResponse>>(response, HttpStatus.OK);
     }
 

@@ -1,8 +1,9 @@
 package com.taskmanager.task_manager.service;
 
+import org.springframework.data.domain.Page;
+
 import com.taskmanager.task_manager.dto.request.TaskRequest;
 import com.taskmanager.task_manager.dto.response.TaskResponse;
-import org.springframework.data.domain.Page;
 
 /**
  * Contract for task management operations.
@@ -44,6 +45,7 @@ public interface TaskService {
     /**
      * Retrieves a paginated list of tasks with optional filters.
      *
+     * @param userId optional user id filter (ADMIN only)
      * @param status optional task status filter
      * @param priority optional task priority filter
      * @param page zero-based page index
@@ -52,7 +54,8 @@ public interface TaskService {
      * @param sortDirection sort order (asc or desc)
      * @return page of task data
      */
-    Page<TaskResponse> getTasks(String status,
+    Page<TaskResponse> getTasks(Integer userId,
+                                String status,
                                 String priority,
                                 int page,
                                 int size,

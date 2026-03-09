@@ -68,6 +68,7 @@ public class SecurityConfig {
             @Override
             public void customize(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry auth) {
                 auth.requestMatchers("/api/v1/auth/register-admin").hasRole("ADMIN");
+                auth.requestMatchers("/api/v1/users/**").hasRole("ADMIN");
                 auth.requestMatchers(
                                 "/api/v1/auth/register",
                                 "/api/v1/auth/login",

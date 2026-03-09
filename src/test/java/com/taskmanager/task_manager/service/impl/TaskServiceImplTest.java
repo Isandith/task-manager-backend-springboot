@@ -74,7 +74,7 @@ class TaskServiceImplTest {
         when(userRepository.findByUsername("john")).thenReturn(Optional.of(currentUser));
         when(taskRepository.findByUserId(anyInt(), any(Pageable.class))).thenReturn(taskPage);
 
-        Page<TaskResponse> response = taskService.getTasks(null, null, 0, 10, "dueDate", "asc");
+        Page<TaskResponse> response = taskService.getTasks(null, null, null, 0, 10, "dueDate", "asc");
 
         assertEquals(1, response.getTotalElements());
         assertEquals(100, response.getContent().get(0).getId());
@@ -100,7 +100,7 @@ class TaskServiceImplTest {
         when(userRepository.findByUsername("admin")).thenReturn(Optional.of(currentUser));
         when(taskRepository.findAll(any(Pageable.class))).thenReturn(taskPage);
 
-        Page<TaskResponse> response = taskService.getTasks(null, null, 0, 10, "priority", "desc");
+        Page<TaskResponse> response = taskService.getTasks(null, null, null, 0, 10, "priority", "desc");
 
         assertEquals(1, response.getTotalElements());
         assertEquals(200, response.getContent().get(0).getId());
