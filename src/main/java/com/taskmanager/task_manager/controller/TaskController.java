@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
  * REST endpoints for task CRUD and task status actions.
  */
 @RestController
-@RequestMapping("/api/tasks")
+@RequestMapping("/api/v1/tasks")
 @SecurityRequirement(name = "bearerAuth")
 public class TaskController {
 

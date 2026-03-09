@@ -67,10 +67,10 @@ public class SecurityConfig {
         http.authorizeHttpRequests(new Customizer<AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry>() {
             @Override
             public void customize(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry auth) {
-                auth.requestMatchers("/api/auth/register-admin").hasRole("ADMIN");
+                auth.requestMatchers("/api/v1/auth/register-admin").hasRole("ADMIN");
                 auth.requestMatchers(
-                                "/api/auth/register",
-                                "/api/auth/login",
+                                "/api/v1/auth/register",
+                                "/api/v1/auth/login",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html")
