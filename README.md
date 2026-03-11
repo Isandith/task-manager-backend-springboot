@@ -446,11 +446,4 @@ Swagger URL:
 
 ## Repository and Submission Notes
 
-- Keep secrets only in environment variables.
-- Do not commit build folders or dependency folders.
-- Recommended exclusions:
-  - target/
-  - node_modules/
-  - .next/
-
 This backend documentation section is aligned with the assignment requirements and can be used directly in the repository README.
